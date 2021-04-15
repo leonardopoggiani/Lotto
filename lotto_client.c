@@ -1,4 +1,4 @@
- #include <arpa/inet.h>
+#include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+// alcune variabili globali di utilitá
 #define BUFFER_SIZE 1024
 #define LUNGHEZZA_SESSION_ID 11
 
@@ -14,7 +15,7 @@ char comando[BUFFER_SIZE];
 char parola1[BUFFER_SIZE];
 char parola2[BUFFER_SIZE];
 
-char sessionId[LUNGHEZZA_SESSION_ID];
+char sessionId[LUNGHEZZA_SESSION_ID]; // contiene il session id generato ad ogni login
 
 int logOk = -1;
 
@@ -32,11 +33,13 @@ const char* comandi = " \n*************** GIOCO DEL LOTTO *************** \n"
                       " 7) !vedi_vincite -> visualizza le vincite di un utente\n"
                       " 8) !esci --> termina il client\n ";
 
+// funzione chiamata all'avvio del sistema
 static inline void prompt(){
     printf("%s",comandi);
 }
 
 int main(int argc, char** argv){
+
     int ret, sd, len;
     uint16_t lmsg;
     struct sockaddr_in srv_addr;
@@ -49,7 +52,7 @@ int main(int argc, char** argv){
     if(argc != 3){
         perror("[ERR] Non ci sono i parametri\n");
         exit(-1);
-    }else{
+    } else {
         ipServer = argv[1];
         printf("[LOG] IpServer: %s\n", ipServer);
         portaServer = atoi(argv[2]);
@@ -60,7 +63,7 @@ int main(int argc, char** argv){
     sd = socket(AF_INET, SOCK_STREAM, 0);
 
     /* Creazione indirizzo del server */
-    memset(&srv_addr, 0, sizeof(srv_addr)); // Pulizia 
+    memset(&srv_addr, 0, sizeof(srv_addr));
     srv_addr.sin_family = AF_INET;
     srv_addr.sin_port = htons(portaServer);
     inet_pton(AF_INET, ipServer, &srv_addr.sin_addr);
@@ -71,7 +74,7 @@ int main(int argc, char** argv){
         exit(-1);
     }
 
-    // (CONTROLLO IP
+    // CONTROLLO IP
     ret = recv(sd, (void*)&lmsg, sizeof (uint16_t), 0);      
     if(ret < 0){
         perror("[ERR] Errore in fase di ricezione(lunghezza): \n");
